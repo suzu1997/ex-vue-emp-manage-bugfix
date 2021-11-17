@@ -40,8 +40,16 @@ export class Employee {
    * @returns 入社日をフォーマットした文字列
    */
   get formattedHireDate(): string {
-    const hireDate = new Date(this.hireDate);
-    return format(hireDate, 'yyyy年MM月dd日');
+    const hireDate = new Date(this.hireDate)
+    return format(hireDate, "yyyy年MM月dd日");
+  }
+  /**
+   * 給料をカンマ区切りにフォーマットして返す.
+   * 
+   * @returns 給料をカンマ区切りにフォーマットした文字列
+   */
+  get formattedSalary(): string {
+    return this.salary.toLocaleString();
   }
 
   public get id(): number {
