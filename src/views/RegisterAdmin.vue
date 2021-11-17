@@ -83,6 +83,7 @@
               登録
               <i class="material-icons right">done</i>
             </button>
+            <div class="error" v-if="registerError">登録できませんでした</div>
           </div>
         </div>
       </form>
@@ -120,6 +121,8 @@ export default class RegisterAdmin extends Vue {
   private passwordError = false;
   // 確認用パスワードのエラー
   private confirmationPasswordError = "";
+  // 管理者登録エラー
+  private registerError = false;
 
   /**
    * 管理者情報を登録する.
@@ -139,6 +142,11 @@ export default class RegisterAdmin extends Vue {
       password: this.password,
     });
     console.dir("response:" + JSON.stringify(response));
+
+    if (response.data.status === "error") {
+      this.registerError = true;
+      return;
+    }
 
     this.$router.push("/loginAdmin");
   }
@@ -190,5 +198,6 @@ export default class RegisterAdmin extends Vue {
 }
 .error {
   color: red;
+  margin-top: 8px;
 }
 </style>
