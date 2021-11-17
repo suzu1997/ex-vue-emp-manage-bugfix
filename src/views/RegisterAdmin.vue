@@ -58,6 +58,22 @@
           </div>
         </div>
         <div class="row">
+          <div class="input-field col s12">
+            <input
+              id="confirmationPassword"
+              type="password"
+              class="validate"
+              minlength="8"
+              v-model="confirmationPassword"
+              required
+            />
+            <div class="error">
+              {{ confirmationPasswordError }}
+            </div>
+            <label for="confirmationPassword">確認用パスワード</label>
+          </div>
+        </div>
+        <div class="row">
           <div class="input-field col s6">
             <button
               class="btn btn-large btn-register waves-effect waves-light"
@@ -93,6 +109,8 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  // 確認用パスワード
+  private confirmationPassword = "";
   // 姓の未入力エラー
   private lastNameError = false;
   // 名の未入力エラー
@@ -101,6 +119,8 @@ export default class RegisterAdmin extends Vue {
   private mailAddressError = false;
   // パスワードの未入力エラー
   private passwordError = false;
+  // 確認用パスワードのエラー
+  private confirmationPasswordError = "";
   // 管理者登録エラー
   private registerError = false;
 
@@ -112,13 +132,7 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
-    this.checkInputValue();
-    if (
-      this.lastNameError ||
-      this.firstNameError ||
-      this.mailAddressError ||
-      this.passwordError
-    ) {
+    if (this.hasInputErrors()) {
       return;
     }
     // 管理者登録処理
@@ -140,24 +154,40 @@ export default class RegisterAdmin extends Vue {
   /**
    * 入力値をチェックする.
    */
-  checkInputValue(): void {
+  hasInputErrors(): boolean {
     this.lastNameError = false;
     this.firstNameError = false;
     this.mailAddressError = false;
     this.passwordError = false;
+    this.confirmationPasswordError = "";
+    let hasError = false;
 
     if (this.lastName === "") {
       this.lastNameError = true;
+      hasError = true;
     }
     if (this.firstName === "") {
       this.firstNameError = true;
+      hasError = true;
     }
     if (this.mailAddress === "") {
       this.mailAddressError = true;
+      hasError = true;
     }
     if (this.password === "") {
       this.passwordError = true;
+      hasError = true;
     }
+    if (this.password !== this.confirmationPassword) {
+      this.confirmationPasswordError =
+        "※パスワードと確認用パスワードが一致していません";
+      hasError = true;
+    }
+    if (this.confirmationPassword === "") {
+      this.confirmationPasswordError = "※確認用パスワードを入力してください";
+      hasError = true;
+    }
+    return hasError;
   }
 }
 </script>
