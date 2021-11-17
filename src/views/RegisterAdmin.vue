@@ -67,6 +67,7 @@
               登録
               <i class="material-icons right">done</i>
             </button>
+            <div class="error" v-if="registerError">登録できませんでした</div>
           </div>
         </div>
       </form>
@@ -75,9 +76,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import config from '@/const/const';
-import axios from 'axios';
+import { Component, Vue } from "vue-property-decorator";
+import config from "@/const/const";
+import axios from "axios";
 
 /**
  * 管理者登録をする画面.
@@ -85,13 +86,13 @@ import axios from 'axios';
 @Component
 export default class RegisterAdmin extends Vue {
   // 姓
-  private lastName = '';
+  private lastName = "";
   // 名
-  private firstName = '';
+  private firstName = "";
   // メールアドレス
-  private mailAddress = '';
+  private mailAddress = "";
   // パスワード
-  private password = '';
+  private password = "";
   // 姓の未入力エラー
   private lastNameError = false;
   // 名の未入力エラー
@@ -100,6 +101,8 @@ export default class RegisterAdmin extends Vue {
   private mailAddressError = false;
   // パスワードの未入力エラー
   private passwordError = false;
+  // 管理者登録エラー
+  private registerError = false;
 
   /**
    * 管理者情報を登録する.
@@ -120,15 +123,20 @@ export default class RegisterAdmin extends Vue {
     }
     // 管理者登録処理
     const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
-      name: this.lastName + ' ' + this.firstName,
+      name: this.lastName + " " + this.firstName,
       mailAddress: this.mailAddress,
       password: this.password,
     });
-    console.dir('response:' + JSON.stringify(response));
+    console.dir("response:" + JSON.stringify(response));
+
+    if (response.data.status === "error") {
+      this.registerError = true;
+      return;
+    }
 
     this.$router.push("/loginAdmin");
   }
-  
+
   /**
    * 入力値をチェックする.
    */
@@ -138,16 +146,16 @@ export default class RegisterAdmin extends Vue {
     this.mailAddressError = false;
     this.passwordError = false;
 
-    if (this.lastName === '') {
+    if (this.lastName === "") {
       this.lastNameError = true;
     }
-    if (this.firstName === '') {
+    if (this.firstName === "") {
       this.firstNameError = true;
     }
-    if (this.mailAddress === '') {
+    if (this.mailAddress === "") {
       this.mailAddressError = true;
     }
-    if (this.password === '') {
+    if (this.password === "") {
       this.passwordError = true;
     }
   }
@@ -160,5 +168,6 @@ export default class RegisterAdmin extends Vue {
 }
 .error {
   color: red;
+  margin-top: 8px;
 }
 </style>
