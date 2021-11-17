@@ -35,6 +35,7 @@
                 ログイン
               </button>
             </div>
+            <div class="error" v-if="loginError">⚠️ログインに失敗しました</div>
           </div>
           <div class="row">
             <div class="input-field col s6 m6 l6">
@@ -52,9 +53,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import config from "@/const/const";
-import axios from "axios";
+import { Component, Vue } from 'vue-property-decorator';
+import config from '@/const/const';
+import axios from 'axios';
 
 /**
  * ログインをする画面.
@@ -62,9 +63,11 @@ import axios from "axios";
 @Component
 export default class LoginAdmin extends Vue {
   // メールアドレス
-  private mailAddress = "";
+  private mailAddress = '';
   // パスワード
-  private password = "";
+  private password = '';
+  // ログインエラーのフラグ
+  private loginError = false;
 
   /**
    * ログインする.
@@ -78,10 +81,15 @@ export default class LoginAdmin extends Vue {
       mailAddress: this.mailAddress,
       password: this.password,
     });
-    console.dir("response:" + JSON.stringify(response));
+    console.dir('response:' + JSON.stringify(response));
+
+    if (response.data.status === 'error') {
+      this.loginError = true;
+      return;
+    }
 
     // 従業員一覧に遷移する
-    this.$router.push("/employeeList");
+    this.$router.push('/employeeList');
   }
 }
 </script>
@@ -89,5 +97,9 @@ export default class LoginAdmin extends Vue {
 <style scoped>
 .login-page {
   width: 600px;
+}
+.error {
+  color: red;
+  margin-left: 15px;
 }
 </style>
