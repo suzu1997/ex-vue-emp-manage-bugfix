@@ -26,7 +26,7 @@
                 employee.name
               }}</router-link>
             </td>
-            <td>{{ employee.hireDate }}</td>
+            <td>{{ employee.formattedHireDate }}</td>
             <td>{{ employee.dependentsCount }}人</td>
           </tr>
         </tbody>
@@ -60,7 +60,9 @@ export default class EmployeeList extends Vue {
    */
   async created(): Promise<void> {
     await this.$store.dispatch("getEmployeeList");
-
+    
+    // 従業員一覧を入社日順にソート
+    this.$store.commit("orderEmployeesByHireDate");
     // 従業員一覧情報をVuexストアから取得
     // 非同期で外部APIから取得しているので、async/await使わないとGetterで取得できない
     // ページング機能実装のため最初の10件に絞り込み

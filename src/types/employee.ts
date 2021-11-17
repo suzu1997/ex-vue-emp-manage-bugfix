@@ -33,6 +33,7 @@ export class Employee {
     // 扶養人数
     private _dependentsCount: number
   ) { }
+
   /**
    * 入社日をフォーマットして返す.
    * 
