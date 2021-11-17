@@ -127,13 +127,7 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
-    this.checkInputValue();
-    if (
-      this.lastNameError ||
-      this.firstNameError ||
-      this.mailAddressError ||
-      this.passwordError
-    ) {
+    if (this.hasInputErrors()) {
       return;
     }
     // 管理者登録処理
@@ -150,24 +144,30 @@ export default class RegisterAdmin extends Vue {
   /**
    * 入力値をチェックする.
    */
-  checkInputValue(): void {
+  hasInputErrors(): boolean {
     this.lastNameError = false;
     this.firstNameError = false;
     this.mailAddressError = false;
     this.passwordError = false;
+    let hasError = false;
 
     if (this.lastName === "") {
       this.lastNameError = true;
+      hasError = true;
     }
     if (this.firstName === "") {
       this.firstNameError = true;
+      hasError = true;
     }
     if (this.mailAddress === "") {
       this.mailAddressError = true;
+      hasError = true;
     }
     if (this.password === "") {
       this.passwordError = true;
+      hasError = true;
     }
+    return hasError;
   }
 }
 </script>
