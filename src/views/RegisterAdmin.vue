@@ -67,8 +67,8 @@
               v-model="confirmationPassword"
               required
             />
-            <div class="error" v-if="passwordError">
-              ※確認用パスワードを入力してください
+            <div class="error">
+              {{ confirmationPasswordError }}
             </div>
             <label for="confirmationPassword">確認用パスワード</label>
           </div>
@@ -118,6 +118,8 @@ export default class RegisterAdmin extends Vue {
   private mailAddressError = false;
   // パスワードの未入力エラー
   private passwordError = false;
+  // 確認用パスワードのエラー
+  private confirmationPasswordError = "";
 
   /**
    * 管理者情報を登録する.
@@ -149,6 +151,7 @@ export default class RegisterAdmin extends Vue {
     this.firstNameError = false;
     this.mailAddressError = false;
     this.passwordError = false;
+    this.confirmationPasswordError = "";
     let hasError = false;
 
     if (this.lastName === "") {
@@ -165,6 +168,15 @@ export default class RegisterAdmin extends Vue {
     }
     if (this.password === "") {
       this.passwordError = true;
+      hasError = true;
+    }
+    if (this.password !== this.confirmationPassword) {
+      this.confirmationPasswordError =
+        "※パスワードと確認用パスワードが一致していません";
+      hasError = true;
+    }
+    if (this.confirmationPassword === "") {
+      this.confirmationPasswordError = "※確認用パスワードを入力してください";
       hasError = true;
     }
     return hasError;
