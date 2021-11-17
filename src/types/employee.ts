@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 /**
  * 従業員情報を表すクラス.
  *
@@ -30,7 +32,17 @@ export class Employee {
     private _characteristics: string,
     // 扶養人数
     private _dependentsCount: number
-  ) {}
+  ) { }
+
+  /**
+   * 入社日をフォーマットして返す.
+   * 
+   * @returns 入社日をフォーマットした文字列
+   */
+  get formattedHireDate(): string {
+    const hireDate = new Date(this.hireDate);
+    return format(hireDate, 'yyyy年MM月dd日');
+  }
 
   public get id(): number {
     return this._id;
