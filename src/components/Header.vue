@@ -29,13 +29,13 @@ import { Component, Vue } from "vue-property-decorator";
 
 @Component
 export default class Header extends Vue {
+  /**
+   * ログイン状態かどうかを取得.
+   * 
+   * @return ログイン状態かどうかのフラグ
+   */
   get isLogin(): boolean {
-    const token = sessionStorage.getItem("token");
-    if (token === "") {
-      return false;
-    } else {
-      return true;
-    }
+    return this.$store.getters.getIsLogin;
   }
 }
 </script>

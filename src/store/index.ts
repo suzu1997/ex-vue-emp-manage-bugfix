@@ -4,6 +4,7 @@ import { Employee } from "@/types/employee";
 import config from "@/const/const";
 // 使うためには「npm install axios --save」を行う
 import axios from "axios";
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
 
@@ -12,7 +13,7 @@ export default new Vuex.Store({
   state: {
     totalEmployeeCount: 0,
     employees: new Array<Employee>(),
-    token: "",
+    token: false,
   }, // end state
   actions: {
     /**
@@ -86,15 +87,21 @@ export default new Vuex.Store({
         }
       });
     },
-    // ログイン時にsettionStorageにtokenを保存する
+    /**
+     * ログイン状態をtrueにする.
+     * 
+     * @param state - ステート
+     */
     login(state) {
-      state.token = "true";
-      sessionStorage.setItem("token", state.token);
+      state.token = true;
     },
-    // ログアウト時にsettionStorageのtokenを空文字にする
+    /**
+     * ログイン状態をfalseにする.
+     * 
+     * @param state - ステート
+     */
     logout(state) {
-      state.token = "";
-      sessionStorage.setItem("token", state.token);
+      state.token = false;
     }
   }, // end mutations
   getters: {
@@ -145,9 +152,22 @@ export default new Vuex.Store({
         );
       };
     },
+    /**
+     * ログイン済みかどうかを返す.
+     * 
+     * @param state - ステート
+     * @returns ログイン済みかどうかのフラグ
+     */
     getIsLogin(state) {
       return state.token;
     }
+
   }, // end getters
-  modules: {}, // end modules
+  plugins: [
+    createPersistedState({
+      key: "token",
+      paths: ["token"],
+      storage: window.sessionStorage,
+    }),
+  ],
 });
