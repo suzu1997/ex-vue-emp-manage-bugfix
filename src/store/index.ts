@@ -13,7 +13,7 @@ export default new Vuex.Store({
   state: {
     totalEmployeeCount: 0,
     employees: new Array<Employee>(),
-    token: false,
+    isLogin: false,
   }, // end state
   actions: {
     /**
@@ -87,7 +87,7 @@ export default new Vuex.Store({
      * @param state - ステート
      */
     login(state) {
-      state.token = true;
+      state.isLogin = true;
     },
     /**
      * ログイン状態をfalseにする.
@@ -95,7 +95,7 @@ export default new Vuex.Store({
      * @param state - ステート
      */
     logout(state) {
-      state.token = false;
+      state.isLogin = false;
     }
   }, // end mutations
   getters: {
@@ -153,14 +153,14 @@ export default new Vuex.Store({
      * @returns ログイン済みかどうかのフラグ
      */
     getIsLogin(state) {
-      return state.token;
+      return state.isLogin;
     }
 
   }, // end getters
   plugins: [
     createPersistedState({
-      key: "token",
-      paths: ["token"],
+      key: "isLogin",
+      paths: ["isLogin"],
       storage: window.sessionStorage,
     }),
   ],

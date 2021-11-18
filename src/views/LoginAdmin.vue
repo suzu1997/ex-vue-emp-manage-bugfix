@@ -87,7 +87,7 @@ export default class LoginAdmin extends Vue {
       this.loginError = true;
       return;
     }
-    // ログインしたらストアのtokenをtrueにする
+    // ログインしたらストアのisLoginをtrueにする
     this.$store.commit("login");
 
     // 従業員一覧に遷移する
