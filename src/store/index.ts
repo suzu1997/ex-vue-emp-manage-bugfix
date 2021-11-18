@@ -71,6 +71,20 @@ export default new Vuex.Store({
         );
       }
     },
+    /**
+     * 従業員一覧を入社日でソートする.
+     * 
+     * @param state - ステート
+     */
+    orderEmployeesByHireDate(state) {
+      state.employees.sort((a, b) => {
+        if (a.hireDate > b.hireDate) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
+    }
   }, // end mutations
   getters: {
     /**
@@ -86,7 +100,7 @@ export default new Vuex.Store({
      * 全従業員一覧を返す.
      *
      * @param state ステート
-     * @returns 従業員一覧情報「
+     * @returns 従業員一覧情報
      */
     getAllEmployees(state) {
       return state.employees;
