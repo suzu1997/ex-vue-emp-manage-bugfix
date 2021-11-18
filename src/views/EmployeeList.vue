@@ -41,7 +41,7 @@
         </thead>
 
         <tbody>
-          <tr v-for="employee of currentEmployeeList" v-bind:key="employee.id">
+          <tr v-for="employee of displayEmployees" v-bind:key="employee.id">
             <td>
               <router-link :to="'/employeeDetail/' + employee.id">{{
                 employee.name
@@ -53,6 +53,29 @@
         </tbody>
       </table>
     </div>
+    <button
+      class="paging-btn"
+      v-on:click="goPrevPage"
+      :disabled="this.currentPage === 1"
+    >
+      &lt;
+    </button>
+    <button
+      v-for="num of pageNum"
+      :key="num"
+      class="paging-btn"
+      :class="{ active: num === currentPage }"
+      v-on:click="changePage(num)"
+    >
+      {{ num }}
+    </button>
+    <button
+      class="paging-btn"
+      v-on:click="goNextPage"
+      :disabled="this.currentPage === this.pageNum"
+    >
+      &gt;
+    </button>
   </div>
 </template>
 
@@ -68,6 +91,12 @@ export default class EmployeeList extends Vue {
   private currentEmployeeList: Array<Employee> = [];
   // 従業員数
   private employeeCount = 0;
+  // ページ数
+  private pageNum = 0;
+  // 現在のページ
+  private currentPage = 1;
+  // 一ページあたりの表示件数
+  private employeeNumPerPage = 10;
   // 検索する文字列
   private searchInput = "";
   // 検索結果メッセージ
@@ -88,8 +117,33 @@ export default class EmployeeList extends Vue {
 
     // 従業員一覧情報をVuexストアから取得
     // 非同期で外部APIから取得しているので、async/await使わないとGetterで取得できない
-    // ページング機能実装のため最初の10件に絞り込み
     this.currentEmployeeList = this.$store.getters.getAllEmployees;
+    // ページ数を計算
+    this.calcPageNum();
+  }
+  /**
+   * ページング処理を行う.
+   */
+  changePage(num: number): void {
+    this.currentPage = num;
+  }
+  /**
+   * 前のページへ移動.
+   */
+  goPrevPage(): void {
+    this.currentPage = this.currentPage - 1;
+  }
+  /**
+   * 次のページへ移動.
+   */
+  goNextPage(): void {
+    this.currentPage = this.currentPage + 1;
+  }
+  /**
+   * ページ数を計算.
+   */
+  calcPageNum(): void {
+    this.pageNum = Math.ceil(this.getEmployeeCount / this.employeeNumPerPage);
   }
   /**
    * 従業員名で検索する.
@@ -112,19 +166,28 @@ export default class EmployeeList extends Vue {
   get getEmployeeCount(): number {
     return this.currentEmployeeList.length;
   }
+  /**
+   * 表示する従業員一覧を取得し返す.
+   *
+   * @returns ページの従業員一覧
+   */
+  get displayEmployees(): Array<Employee> {
+    // 表示したい配列部分の開始、終了インデックスを計算
+    const startIndex = (this.currentPage - 1) * this.employeeNumPerPage;
+    const endIndex = startIndex + this.employeeNumPerPage;
+
+    return this.currentEmployeeList.slice(startIndex, endIndex);
+  }
 }
 </script>
 
 <style scoped>
-.row {
-  margin-bottom: 0;
+.paging-btn {
+  padding: 8px 15px;
+  margin-right: 8px;
+  margin-bottom: 8px;
 }
-
-.btn {
-  margin-top: 20px;
-}
-
-.searchMessage {
-  margin-bottom: 10px;
+.active {
+  background-color: rgb(49, 206, 145);
 }
 </style>
