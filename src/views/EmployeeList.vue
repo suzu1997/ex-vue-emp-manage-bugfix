@@ -8,6 +8,27 @@
         </div>
       </div>
     </nav>
+    <form class="col s12" id="reg-form">
+      <div class="row">
+        <div class="input-field col s6">
+          <input
+            id="search"
+            type="text"
+            class="validate"
+            v-model="searchInput"
+          />
+          <label for="search">従業員名で検索</label>
+        </div>
+        <button
+          class="btn waves-effect waves-light"
+          type="button"
+          v-on:click="searchEmployees"
+        >
+          検索
+        </button>
+      </div>
+      <div class="searchMessage">{{ searchMessage }}</div>
+    </form>
     <div>従業員数:{{ getEmployeeCount }}人</div>
     <div class="row">
       <table class="striped">
@@ -47,6 +68,10 @@ export default class EmployeeList extends Vue {
   private currentEmployeeList: Array<Employee> = [];
   // 従業員数
   private employeeCount = 0;
+  // 検索する文字列
+  private searchInput = "";
+  // 検索結果メッセージ
+  private searchMessage = "";
 
   /**
    * Vuexストアのアクション経由で非同期でWebAPIから従業員一覧を取得する.
@@ -60,13 +85,26 @@ export default class EmployeeList extends Vue {
    */
   async created(): Promise<void> {
     await this.$store.dispatch("getEmployeeList");
-    
+
     // 従業員一覧を入社日順にソート
     this.$store.commit("orderEmployeesByHireDate");
     // 従業員一覧情報をVuexストアから取得
     // 非同期で外部APIから取得しているので、async/await使わないとGetterで取得できない
     // ページング機能実装のため最初の10件に絞り込み
     this.currentEmployeeList = this.$store.getters.getAllEmployees;
+  }
+  /**
+   * 従業員名で検索する.
+   */
+  searchEmployees(): void {
+    this.searchMessage = "";
+    this.currentEmployeeList = this.$store.getters.getSearchEmployeeByName(
+      this.searchInput
+    );
+    if (this.getEmployeeCount === 0) {
+      this.searchMessage = "１件もありませんでしたので全件表示します";
+      this.currentEmployeeList = this.$store.getters.getAllEmployees;
+    }
   }
   /**
    * 現在表示されている従業員一覧の数を返す.
@@ -80,15 +118,15 @@ export default class EmployeeList extends Vue {
 </script>
 
 <style scoped>
-.searchForm {
-  margin-bottom: 20px;
-  width: 450px;
-  margin: 0 auto;
+.row {
+  margin-bottom: 0;
 }
 
-.searchBtn {
-  display: block;
-  width: 150px;
-  margin: 0 auto;
+.btn {
+  margin-top: 20px;
+}
+
+.searchMessage {
+  margin-bottom: 10px;
 }
 </style>
