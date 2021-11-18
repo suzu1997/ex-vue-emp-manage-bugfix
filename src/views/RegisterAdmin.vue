@@ -50,8 +50,8 @@
               v-model="zipcode"
               required
             />
-            <div class="error" v-if="zipcodeError">
-              ※郵便番号を入力してください
+            <div class="error">
+              {{ zipcodeError }}
             </div>
             <label for="zipcode">郵便番号</label>
           </div>
@@ -161,7 +161,7 @@ export default class RegisterAdmin extends Vue {
   // メールアドレスの未入力エラー
   private mailAddressError = false;
   // 郵便番号の未入力エラー
-  private zipcodeError = false;
+  private zipcodeError = "";
   // 住所の未入力エラー
   private addressError = false;
   // パスワードの未入力エラー
@@ -206,7 +206,7 @@ export default class RegisterAdmin extends Vue {
     this.lastNameError = false;
     this.firstNameError = false;
     this.mailAddressError = false;
-    this.zipcodeError = false;
+    this.zipcodeError = "";
     this.passwordError = false;
     this.addressError = false;
     this.confirmationPasswordError = "";
@@ -229,7 +229,7 @@ export default class RegisterAdmin extends Vue {
       hasError = true;
     }
     if (this.zipcode === "") {
-      this.zipcodeError = true;
+      this.zipcodeError = "※郵便番号を入力してください";
       hasError = true;
     }
     if (this.address === "") {
@@ -251,16 +251,20 @@ export default class RegisterAdmin extends Vue {
    * 郵便番号から住所を取得する.
    */
   async searchAddress(): Promise<void> {
-    const url = "https://zipcoda.net/api";
-    const response = await axios.get(url, {
-      adapter: axiosJsonpAdapter,
-      params: {
-        zipcode: this.zipcode,
-      },
-    });
-    console.dir("response:" + JSON.stringify(response.data.items[0].address));
-
-    this.address = response.data.items[0].address;
+    try {
+      const url = "https://zipcoda.net/api";
+      const response = await axios.get(url, {
+        adapter: axiosJsonpAdapter,
+        params: {
+          zipcode: this.zipcode,
+        },
+      });
+      console.dir("response:" + JSON.stringify(response.data.items[0].address));
+      this.address = response.data.items[0].address;
+    } catch (error) {
+      console.log(error);
+      this.zipcodeError = "存在しない郵便番号です";
+    }
   }
 }
 </script>
