@@ -12,6 +12,7 @@ export default new Vuex.Store({
   state: {
     totalEmployeeCount: 0,
     employees: new Array<Employee>(),
+    token: "",
   }, // end state
   actions: {
     /**
@@ -84,6 +85,16 @@ export default new Vuex.Store({
           return -1;
         }
       });
+    },
+    // ログイン時にsettionStorageにtokenを保存する
+    login(state) {
+      state.token = "true";
+      sessionStorage.setItem("token", state.token);
+    },
+    // ログアウト時にsettionStorageのtokenを空文字にする
+    logout(state) {
+      state.token = "";
+      sessionStorage.setItem("token", state.token);
     }
   }, // end mutations
   getters: {
@@ -134,6 +145,9 @@ export default new Vuex.Store({
         );
       };
     },
+    getIsLogin(state) {
+      return state.token;
+    }
   }, // end getters
   modules: {}, // end modules
 });

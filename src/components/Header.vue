@@ -9,13 +9,13 @@
         </div>
 
         <div class="header-right">
-          <router-link to="/registerAdmin">
+          <router-link to="/registerAdmin" v-if="!isLogin">
             管理者登録
           </router-link>
-          <router-link to="/loginAdmin">
+          <router-link to="/loginAdmin" v-if="!isLogin">
             <i class="fas fa-sign-in-alt"></i>ログイン
           </router-link>
-          <router-link to="/logoutAdmin">
+          <router-link to="/logoutAdmin" v-if="isLogin">
             <i class="fas fa-sign-in-alt"></i>ログアウト
           </router-link>
         </div>
@@ -28,7 +28,16 @@
 import { Component, Vue } from "vue-property-decorator";
 
 @Component
-export default class Header extends Vue {}
+export default class Header extends Vue {
+  get isLogin(): boolean {
+    const token = sessionStorage.getItem("token");
+    if (token === "") {
+      return false;
+    } else {
+      return true;
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
