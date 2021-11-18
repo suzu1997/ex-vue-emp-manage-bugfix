@@ -70,21 +70,15 @@ export default new Vuex.Store({
           )
         );
       }
-    },
-    /**
-     * 従業員一覧を入社日でソートする.
-     * 
-     * @param state - ステート
-     */
-    orderEmployeesByHireDate(state) {
+      // 従業員一覧を入社日の降順でソートする.
       state.employees.sort((a, b) => {
-        if (a.hireDate > b.hireDate) {
+        if (a.hireDate < b.hireDate) {
           return 1;
         } else {
           return -1;
         }
       });
-    }
+    },
   }, // end mutations
   getters: {
     /**
