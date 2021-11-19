@@ -42,6 +42,43 @@
           </div>
         </div>
         <div class="row">
+          <div class="input-field col s5">
+            <input
+              id="zipcode"
+              type="text"
+              class="validate"
+              v-model="zipcode"
+              required
+            />
+            <div class="error">
+              {{ zipcodeError }}
+            </div>
+            <label for="zipcode">郵便番号</label>
+          </div>
+          <button
+            class="btn waves-effect waves-light addressSearchBtn"
+            type="button"
+            v-on:click="searchAddress"
+          >
+            住所検索
+          </button>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input
+              id="address"
+              type="text"
+              class="validate"
+              v-model="address"
+              required
+            />
+            <div class="error" v-if="addressError">
+              ※住所を入力してください
+            </div>
+            <label for="address" :class="{ active: address }">住所</label>
+          </div>
+        </div>
+        <div class="row">
           <div class="input-field col s12">
             <input
               id="password"
@@ -95,6 +132,8 @@
 import { Component, Vue } from "vue-property-decorator";
 import config from "@/const/const";
 import axios from "axios";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const axiosJsonpAdapter = require("axios-jsonp");
 
 /**
  * 管理者登録をする画面.
@@ -107,6 +146,10 @@ export default class RegisterAdmin extends Vue {
   private firstName = "";
   // メールアドレス
   private mailAddress = "";
+  // 郵便番号
+  private zipcode = "";
+  // 住所
+  private address = "";
   // パスワード
   private password = "";
   // 確認用パスワード
@@ -117,6 +160,10 @@ export default class RegisterAdmin extends Vue {
   private firstNameError = false;
   // メールアドレスの未入力エラー
   private mailAddressError = false;
+  // 郵便番号の未入力エラー
+  private zipcodeError = "";
+  // 住所の未入力エラー
+  private addressError = false;
   // パスワードの未入力エラー
   private passwordError = false;
   // 確認用パスワードのエラー
@@ -140,6 +187,7 @@ export default class RegisterAdmin extends Vue {
       name: this.lastName + " " + this.firstName,
       mailAddress: this.mailAddress,
       password: this.password,
+      address: this.address,
     });
     console.dir("response:" + JSON.stringify(response));
 
@@ -158,7 +206,9 @@ export default class RegisterAdmin extends Vue {
     this.lastNameError = false;
     this.firstNameError = false;
     this.mailAddressError = false;
+    this.zipcodeError = "";
     this.passwordError = false;
+    this.addressError = false;
     this.confirmationPasswordError = "";
     let hasError = false;
 
@@ -178,6 +228,14 @@ export default class RegisterAdmin extends Vue {
       this.passwordError = true;
       hasError = true;
     }
+    if (this.zipcode === "") {
+      this.zipcodeError = "※郵便番号を入力してください";
+      hasError = true;
+    }
+    if (this.address === "") {
+      this.addressError = true;
+      hasError = true;
+    }
     if (this.password !== this.confirmationPassword) {
       this.confirmationPasswordError =
         "※パスワードと確認用パスワードが一致していません";
@@ -189,6 +247,25 @@ export default class RegisterAdmin extends Vue {
     }
     return hasError;
   }
+  /**
+   * 郵便番号から住所を取得する.
+   */
+  async searchAddress(): Promise<void> {
+    try {
+      const url = "https://zipcoda.net/api";
+      const response = await axios.get(url, {
+        adapter: axiosJsonpAdapter,
+        params: {
+          zipcode: this.zipcode,
+        },
+      });
+      console.dir("response:" + JSON.stringify(response.data.items[0].address));
+      this.address = response.data.items[0].address;
+    } catch (error) {
+      console.log(error);
+      this.zipcodeError = "存在しない郵便番号です";
+    }
+  }
 }
 </script>
 
@@ -199,5 +276,8 @@ export default class RegisterAdmin extends Vue {
 .error {
   color: red;
   margin-top: 8px;
+}
+.addressSearchBtn {
+  margin-top: 18px;
 }
 </style>
