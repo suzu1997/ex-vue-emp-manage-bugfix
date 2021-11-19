@@ -53,9 +53,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import config from '@/const/const';
-import axios from 'axios';
+import { Component, Vue } from "vue-property-decorator";
+import config from "@/const/const";
+import axios from "axios";
 
 /**
  * ログインをする画面.
@@ -63,9 +63,9 @@ import axios from 'axios';
 @Component
 export default class LoginAdmin extends Vue {
   // メールアドレス
-  private mailAddress = '';
+  private mailAddress = "";
   // パスワード
-  private password = '';
+  private password = "";
   // ログインエラーのフラグ
   private loginError = false;
 
@@ -81,15 +81,17 @@ export default class LoginAdmin extends Vue {
       mailAddress: this.mailAddress,
       password: this.password,
     });
-    console.dir('response:' + JSON.stringify(response));
+    console.dir("response:" + JSON.stringify(response));
 
-    if (response.data.status === 'error') {
+    if (response.data.status === "error") {
       this.loginError = true;
       return;
     }
+    // ログインしたらストアのisLoginをtrueにする
+    this.$store.commit("login");
 
     // 従業員一覧に遷移する
-    this.$router.push('/employeeList');
+    this.$router.push("/employeeList");
   }
 }
 </script>
